@@ -1,135 +1,196 @@
-# GenAI Projects
+# Local AI Agent — Restaurant Review RAG System
 
-A collection of hands-on projects, experiments, and learning resources focused on Generative AI, Large Language Models (LLMs), LangChain, Retrieval-Augmented Generation (RAG), and AI-powered applications.
+A locally running AI application that answers natural-language questions about restaurant reviews using Retrieval-Augmented Generation (RAG). The system retrieves relevant reviews from a local vector database and uses a language model to generate context-aware responses.
 
-This repository documents my practical learning journey in Generative AI, from experimenting with LangChain and prompts to building local AI applications.
+## Overview
 
-## Repository Overview
+The Local AI Agent combines semantic search with a local language model to answer questions grounded in restaurant review data. Instead of relying entirely on a model's pretrained knowledge, it retrieves relevant information from a dataset before generating a response.
 
-The repository is organized into separate folders so that each project or learning area can be explored independently.
+The application uses Ollama for local model execution and embeddings, LangChain to orchestrate the retrieval pipeline, and ChromaDB to store and search document embeddings.
 
-| Directory / File | Description |
+## Features
+
+- **Retrieval-Augmented Generation:** Retrieves relevant restaurant reviews before generating answers.
+- **Semantic Search:** Finds reviews based on meaning rather than exact keyword matches.
+- **Local Model Execution:** Uses Ollama to run the embedding model and language model locally.
+- **Vector Database:** Stores restaurant review embeddings using ChromaDB.
+- **Metadata Support:** Preserves review ratings and dates alongside document content.
+- **Interactive Question Answering:** Allows users to ask questions through a command-line interface.
+- **Persistent Storage:** Saves the vector database locally for reuse across application runs.
+
+## Technology Stack
+
+| Technology | Purpose |
 |---|---|
-| `LOCAL_AI_AGENT/` | A local restaurant-review question-answering application built with Retrieval-Augmented Generation (RAG), LangChain, ChromaDB, and Ollama. |
-| `langchain/` | LangChain experiments and learning examples. |
-| `LANGCHAIN PROMPTS/` | Prompt examples and experiments for working with language models. |
-| `main.py` | Python entry-point or experiment file at the repository root. Review the code before running it to understand its purpose and configuration. |
+| Python | Core application development |
+| LangChain | RAG pipeline and component integration |
+| Ollama | Local model execution and text embeddings |
+| `mxbai-embed-large` | Text embedding generation |
+| ChromaDB | Vector storage and similarity search |
+| Pandas | Loading and processing CSV data |
 
-The contents of the repository may evolve as new projects and experiments are added.
+## Architecture
 
-## Featured Project: Local AI Agent
+The application follows a retrieval-augmented generation workflow:
 
-The `LOCAL_AI_AGENT/` project answers natural-language questions about restaurant reviews using a local retrieval-augmented generation pipeline.
+1. **Data Ingestion:** Loads restaurant review records from a CSV file using Pandas.
+2. **Document Preparation:** Converts each review into a LangChain document containing text and metadata.
+3. **Embedding Generation:** Uses Ollama to convert document text into numerical vectors.
+4. **Vector Storage:** Stores the embeddings and associated documents in ChromaDB.
+5. **Query Processing:** Accepts a question from the user through the command-line interface.
+6. **Relevant Document Retrieval:** Searches the vector database and retrieves the five most relevant reviews.
+7. **Response Generation:** Passes the retrieved context and question to the language model to generate an answer.
 
-### Key components
+## Project Structure
 
-- **Python** for application logic
-- **LangChain** for connecting retrieval and language-model components
-- **Ollama** for local model execution and embeddings
-- **ChromaDB** for persistent vector storage and semantic search
-- **Pandas** for loading and preparing the review dataset
+```text
+LOCAL_AI_AGENT/
+├── main.py
+├── vector.py
+├── realistic_restaurant_reviews.csv
+├── requirements.txt
+├── README.md
+├── .gitignore
+└── chroma_db/                 # Generated locally; excluded from Git
+```
 
-### How it works
+The `chroma_db/` directory is generated locally when the vector database is initialized. It should not be committed to the repository.
 
-1. Loads restaurant review records from a CSV file.
-2. Converts review text into documents with associated metadata.
-3. Generates embeddings using the configured Ollama embedding model.
-4. Stores documents and embeddings in ChromaDB.
-5. Retrieves relevant reviews for a user's question.
-6. Uses the configured language model to produce a context-aware answer.
+## Prerequisites
 
-For project-specific dependencies and instructions, see [`LOCAL_AI_AGENT/README.md`](LOCAL_AI_AGENT/README.md).
+Before running the project, ensure you have:
 
-## Getting Started
-
-### Prerequisites
-
-Requirements vary by project. Depending on which folder you want to run, you may need:
-
-- Python 3.10 or a compatible version for the project's dependencies
+- Python 3.10 or a compatible version supported by your installed dependencies
 - Git
-- The packages listed in that project's `requirements.txt`, if provided
-- Ollama and the required local models for `LOCAL_AI_AGENT/`
+- Ollama installed and running
+- The required Ollama embedding model downloaded
+- A compatible local chat model configured in `main.py`
 
-### Clone the repository
+## Installation and Setup
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/AdityaRoy26/GenAI-Projects.git
-cd GenAI-Projects
+cd GenAI-Projects/LOCAL_AI_AGENT
 ```
 
-### Explore a project
+If this project is stored in a separate GitHub repository, use that repository's URL and navigate to its root directory instead.
 
-Open the folder you want to work with and read its project-specific instructions before running the code. If a folder has its own `README.md` or `requirements.txt`, use those files as the source of truth for setup.
-
-For Python projects, it is recommended to create a separate virtual environment for each project:
+### 2. Create a Virtual Environment
 
 ```bash
-python -m venv .venv
+python -m venv venv
 ```
 
-On Windows PowerShell, activate it with:
+Activate the environment on Windows:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1
 ```
 
-Install dependencies only after navigating to the relevant project folder and checking whether it provides a `requirements.txt`:
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Repository Guidelines
+### 4. Start Ollama
 
-- Keep each project in its own directory where practical.
-- Add a project-level `README.md` with setup instructions, dependencies, and usage examples.
-- Keep generated files, virtual environments, model caches, and local vector databases out of version control.
-- Store secrets and API keys in environment variables or a local `.env` file; never commit credentials.
-- Include a `.env.example` file when a project needs environment variables, using placeholder values only.
-- Include dataset attribution and licensing information when applicable.
-- Prefer reproducible setup steps so projects can be run on another machine.
+Install Ollama from the official website:
 
-## Security and Files to Exclude
+https://ollama.com/download
 
-Do not commit local environment files or generated artifacts, including:
+Make sure the Ollama application is running, then download the embedding model:
 
-```gitignore
-.env
-.env.*
-!.env.example
-venv/
-.venv/
-__pycache__/
-*.py[cod]
-chroma_db/
-chroma.sqlite3
-.ipynb_checkpoints/
+```bash
+ollama pull mxbai-embed-large
 ```
 
-Review the repository's `.gitignore` before pushing changes. If a secret has already been committed or pushed, revoke or rotate it; adding it to `.gitignore` alone does not remove it from Git history.
+The application also requires the chat model configured in `main.py`. Download that model using `ollama pull MODEL_NAME`, replacing `MODEL_NAME` with the model specified in your code.
 
-## Learning Goals
+### 5. Run the Application
 
-This repository is intended to build practical experience with:
+From the project directory, execute:
 
-- Prompt engineering
-- LangChain components and workflows
-- Large Language Model integration
-- Text embeddings and semantic search
-- Vector databases
-- Retrieval-Augmented Generation (RAG)
-- Building and debugging local AI applications
+```bash
+python main.py
+```
+
+Enter a question when prompted. To exit the application, enter `q`.
+
+## Example Usage
+
+```text
+Ask your question (q to quit): What do customers think about the food quality?
+
+[The application retrieves relevant restaurant reviews and generates
+a response based on the retrieved context.]
+```
+
+The exact response depends on the contents of the dataset, the retrieved reviews, and the configured language model.
+
+## Configuration
+
+### Embedding Model
+
+The project uses the following embedding model in `vector.py`:
+
+```python
+OllamaEmbeddings(model="mxbai-embed-large")
+```
+
+### Retrieval Settings
+
+The retriever is configured to return up to five relevant documents per query:
+
+```python
+retriever = vector_store.as_retriever(
+    search_kwargs={"k": 5}
+)
+```
+
+The number of retrieved documents can be adjusted depending on the dataset and the desired balance between context and response quality.
+
+### Vector Database
+
+ChromaDB stores the restaurant review documents and their embeddings in a local persistent directory. The database can be regenerated from the CSV dataset when necessary.
+
+## Dataset
+
+The project uses `realistic_restaurant_reviews.csv` as its source of restaurant review data.
+
+Each record is processed into a document containing the review title and text, along with metadata such as rating and date.
+
+Ensure you have permission to redistribute the dataset before publishing it in a public repository.
+
+## Limitations
+
+- Answer quality depends on the relevance and completeness of the retrieved reviews.
+- The system may generate inaccurate information if the retrieved context is insufficient or the language model makes unsupported inferences.
+- Local inference performance depends on the available hardware and the selected models.
+- Initial database creation can take time because the documents must be embedded.
+- The embedding model and chat model must be available through Ollama.
 
 ## Future Improvements
 
-Planned improvements may include:
+- Add a web interface using Streamlit or FastAPI.
+- Support filtering by rating and review date.
+- Display the source reviews used to generate each answer.
+- Add document deduplication and more robust database initialization.
+- Improve error handling and configuration management.
+- Evaluate retrieval quality and answer faithfulness using a test dataset.
 
-- Adding more standalone GenAI projects
-- Documenting setup and execution steps for each project
-- Adding screenshots or demonstrations where useful
-- Improving configuration and error handling
-- Exploring more advanced RAG pipelines and AI-agent workflows
+## Learning Outcomes
+
+This project demonstrates practical implementation of:
+
+- Retrieval-Augmented Generation (RAG)
+- Text embeddings and semantic similarity search
+- Vector database integration
+- Document processing and metadata management
+- Local Large Language Model (LLM) integration
+- Building an interactive question-answering pipeline with LangChain
 
 ## Author
 
@@ -139,4 +200,4 @@ GitHub: [AdityaRoy26](https://github.com/AdityaRoy26)
 
 ## License
 
-Unless a license file is present, no reuse license is implied. Check the license and terms for each included project, dependency, and dataset before redistributing them.
+Add a license if you intend to distribute this project publicly. If the dataset has separate licensing or usage restrictions, follow those terms as well.
